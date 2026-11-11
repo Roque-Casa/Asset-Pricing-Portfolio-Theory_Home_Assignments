@@ -20,6 +20,7 @@ tri_cols <- paste0(stocks, "...TOT.RETURN.IND")
 cap_cols <- paste0(stocks, "...MARKET.VALUE")
 
 
+
 ## ---- exercise-1 ----
 # Exercise 1
 
@@ -142,6 +143,7 @@ mean_annual_return_2 <- (
 print(mean_annual_return_2)
 
 
+
 ## ---- exercise-3 ----
 # Exercise 3
 
@@ -200,6 +202,7 @@ volatility_monthly_3 <- sqrt(
 #print(weight_rf_3)
 #print(expected_return_3 * 100)
 print(volatility_monthly_3 * 100)
+
 
 
 ## ---- exercise-4 ----
@@ -307,15 +310,143 @@ print(rolling_results_4)
 print(average_volatility_4)
 
 
+
 ## ---- exercise-5 ----
 # Exercise 5
 
-# Calculate realised portfolio returns
+# Select realised monthly stock returns for January–September 2022
+realised_returns_5 <- returns_data_4 %>%
+  filter(
+    Date >= as.Date("2022-01-01"),
+    Date <= as.Date("2022-09-30")
+  ) %>%
+  arrange(Date)
+
+# Select corresponding portfolio weights from Exercise 4
+weights_5 <- portfolio_weights_4[1:9, , drop = FALSE]
+
+# Calculate risk-free portfolio
+rf_weights_5 <- 1 - rowSums(weights_5)
+
+
+rf_data_5 <- monthly_cleaned %>%
+  arrange(Date) %>%
+  mutate(
+    rf_monthly_5 = lag(.data[[rf_col_3]]) / 100 / 12
+  )
+
+rf_rates_5 <- rf_data_5$rf_monthly_5[
+  match(realised_returns_5$Date, rf_data_5$Date)
+]
+
+# Calculate returns
+stock_returns_5 <- as.matrix(realised_returns_5[, -1])
+
+portfolio_returns_5 <- rowSums(
+  weights_5 * stock_returns_5
+) + rf_weights_5 * rf_rates_5
+
+cumulative_return_5 <- (
+  prod(1 + portfolio_returns_5) - 1
+) * 100
+
+# Create results table
+results_5 <- data.frame(
+  Month = format(realised_returns_5$Date, "%B %Y"),
+  Portfolio_Return = portfolio_returns_5 * 100
+)
+
 # Results
+print(results_5)
+print(cumulative_return_5)
+
 
 
 ## ---- exercise-6 ----
 # Exercise 6
 
-# Compare Sharpe ratios
+# MPT portfolio from Exercise 5
+mpt_returns_6 <- portfolio_returns_5
+
+# Equally weighted portfolio
+equal_returns_6 <- rowMeans(stock_returns_5)
+
+# Value-weighted portfolio without 35% cap
+market_caps_6 <- as.matrix(
+  caps_1[
+    match(realised_returns_5$Date, data_1$Date),
+  ]
+)
+
+value_weights_6 <- market_caps_6 / rowSums(market_caps_6)
+
+value_returns_6 <- rowSums(
+  value_weights_6 * stock_returns_5
+)
+
+# Rolling global minimum-variance portfolio
+gmv_weights_6 <- matrix(
+  NA_real_,
+  nrow = nrow(realised_returns_5),
+  ncol = length(stocks)
+)
+
+gmv_returns_6 <- numeric(nrow(realised_returns_5))
+
+for (i in seq_len(nrow(realised_returns_5))) {
+  
+  # Previous 132 monthly returns
+  window_6 <- returns_data_4 %>%
+    filter(Date < realised_returns_5$Date[i]) %>%
+    tail(132)
+  
+  # Estimate sample covariance matrix
+  Sigma_6 <- cov(window_6[, -1])
+  ones_6 <- rep(1, length(stocks))
+  
+  # Calculate GMV weights
+  weights_6 <- as.numeric(
+    solve(Sigma_6, ones_6) /
+      sum(solve(Sigma_6, ones_6))
+  )
+  
+  # Calculate realised portfolio return
+  gmv_weights_6[i, ] <- weights_6
+  gmv_returns_6[i] <- sum(
+    weights_6 * stock_returns_5[i, ]
+  )
+}
+
+# Combine realised monthly returns
+portfolio_comparison_6 <- data.frame(
+  MPT = mpt_returns_6,
+  Equal_Weighted = equal_returns_6,
+  Value_Weighted = value_returns_6,
+  Minimum_Variance = gmv_returns_6
+)
+
+# Calculate monthly excess returns
+excess_returns_6 <- portfolio_comparison_6 - rf_rates_5
+
+# Calculate mean excess returns and sample volatilities
+mean_excess_6 <- colMeans(excess_returns_6)
+volatility_6 <- sapply(portfolio_comparison_6, sd)
+
+# Calculate monthly Sharpe ratios
+sharpe_ratios_6 <- mean_excess_6 / volatility_6
+
+# Create comparison table
+results_6 <- data.frame(
+  Portfolio = c(
+    "MPT",
+    "Equally Weighted",
+    "Value Weighted",
+    "Minimum Variance"
+  ),
+  Mean_Excess_Return = as.numeric(mean_excess_6) * 100,
+  Volatility = as.numeric(volatility_6) * 100,
+  Sharpe_Ratio = as.numeric(sharpe_ratios_6)
+)
+
 # Results
+print(results_6)

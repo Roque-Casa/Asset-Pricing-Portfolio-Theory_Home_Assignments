@@ -2,10 +2,18 @@
 title: "Home Assignment 3"
 author: "Roque Hauser"
 date: "`r Sys.Date()`"
-output: pdf_document
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 1
+    number_sections: false
+header-includes:
+  - \usepackage{xcolor}
+  - \usepackage{hyperref}
+  - \hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
 ---
-[View RStudio Project on GitHub](https://github.com/USERNAME/REPOSITORY)
 
+\href{https://github.com/Roque-Casa/Asset-Pricing-Portfolio-Theory_Home_Assignments}{\underline{\textcolor{blue}{View RStudio Project on GitHub}}}
 
 ```{r setup, include=FALSE}
 # Hide R code by default
@@ -55,7 +63,7 @@ the mean realised return per annum?
 ### Answer
 The portfolio weights are based on the previous month's market capitalisations and capped at 35%, with excess weight redistributed proportionally among the remaining stocks.
 
-The mean annualised return is The mean annualised return is **`r round(mean_annual_return_1)`%**.
+The mean annualised return is **`r mean_annual_return_1`%**.
 
 Therefore, the correct answer is **c. 27–30%**.
 
@@ -75,7 +83,7 @@ return, and volatility. Answer: What is its expected return per annum?
 ### Answer
 The global minimum-variance portfolio was calculated using the monthly mean returns and sample covariance matrix of the five stocks.
 
-The portfolio has an expected annualised return of **`r round(mean_annual_return_2)`%** and a monthly volatility of **`r round(volatility_monthly_2 * 100, 2)`%**.
+The portfolio has an expected annualised return of **`r mean_annual_return_2`%** and a monthly volatility of **`r volatility_monthly_2 * 100`%**.
 
 Therefore, the correct answer is **c. 19–20%**.
 
@@ -114,7 +122,7 @@ return of 1% per month. What is the expected volatility for January 2022?
 ### Answer
 Using historical monthly returns from January 2011 to December 2021 and the risk-free rate from December 2021, the CML portfolio was calculated for a target return of 1% per month.
 
-The expected monthly volatility for January 2022 is **`r round(volatility_monthly_3 * 100)`%**.
+The expected monthly volatility for January 2022 is **`r volatility_monthly_3 * 100`%**.
 
 Therefore, the correct answer is **c. 2.0–2.2%**.
 
@@ -128,18 +136,21 @@ Therefore, the correct answer is **c. 2.0–2.2%**.
 # Exercise 4
 
 ### Question
-Assume that the risk-free rate is given in column AQ. Divide by 100 to convert the annual
-percentage rate to a decimal, and then divide by 12 to approximate the monthly rate. Use
-the rate observed at the end of the preceding month: for January 2022, use the value from
-31 December 2021; for February, use the value from the end of January; and so on. This
-ensures that the risk-free return is known before the investment period.
-Re-estimate the return and volatility of the portfolio on the capital market line with a target
-return of 1% per month. What is the expected volatility for January 2022?
+(2 points) Q3 continued. Continue in a rolling fashion for February–October 2022. Each
+month, add the newly available observation and drop the oldest observation, keeping the
+estimation-window length fixed. Estimate the expected returns and variance–covariance
+matrix, then calculate the expected portfolio volatility for each month. Answer: What is
+the average expected monthly volatility over January–October 2022, including the January
+estimate from Q3?
+R hint: use colMeans() and cov() within a rolling-window loop. If calculating the sample
+covariance matrix directly, let R be the T × N return matrix and
+r^T the 1 × N row vector
+of column means.
 
 ### Answer
 Using a rolling estimation window of 132 monthly returns, the expected portfolio volatilities were calculated for January to October 2022.
 
-The average expected monthly volatility is **`r round(average_volatility_4, 2)`%**.
+The average expected monthly volatility is **`r average_volatility_4`%**.
 
 Therefore, the correct answer is **c. 2.0–2.2%**.
 
@@ -164,3 +175,69 @@ knitr::kable(
 \newpage
 
 # Exercise 5
+
+### Question
+Use the rolling portfolio weights from Q4, including the January weights from Q3, to calculate
+the realised portfolio return for January–September 2022. Report the cumulative realised
+return over that period.
+
+### Answer
+Using the rolling portfolio weights from Exercises 3 and 4, the realised monthly portfolio returns were calculated for January to September 2022, including the risk-free allocation.
+
+The cumulative realised return over this period is **`r cumulative_return_5`%**.
+
+Therefore, the correct answer is **a. Less than 15%**.
+
+
+```{r exercise-5-results, echo=FALSE}
+knitr::kable(
+  results_5,
+  digits = 2,
+  col.names = c("Month", "Realised Portfolio Return (%)"),
+  caption = "Realised Monthly Portfolio Returns"
+)
+```
+### R Code
+
+```{r exercise-5, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 6
+
+### Question
+(2 points) Calculate the Sharpe ratio for the modern portfolio theory (MPT) portfolio in
+Q5 using monthly data for January–September 2022. Also calculate mean excess returns
+and volatilities for the rolling minimum-variance portfolio (estimated as in Q4), the equally
+weighted portfolio, and the value-weighted portfolio. These three comparison portfolios do
+not include the risk-free asset. Rebalance the equally weighted portfolio monthly and use
+uncapped value weights for the value-weighted portfolio.
+
+Calculate their Sharpe ratios for January–September 2022. Which of the four strategies has
+the highest Sharpe ratio?
+
+### Answer
+The Sharpe ratios were calculated using realised monthly returns from January to September 2022. Each portfolio was evaluated based on its mean excess return and sample volatility.
+
+The portfolio with the highest Sharpe ratio is **the equally weighted portfolio**, indicating the best risk-adjusted performance over the sample period.
+
+Therefore, the correct answer is **b. Equally weighted portfolio**.
+
+```{r exercise-6-results, echo=FALSE}
+knitr::kable(
+  results_6,
+  digits = 3,
+  col.names = c(
+    "Portfolio",
+    "Mean Excess Return (%)",
+    "Volatility (%)",
+    "Sharpe Ratio"
+  ),
+  caption = "Comparison of Monthly Sharpe Ratios"
+)
+```
+### R Code
+
+```{r exercise-6, eval=FALSE, echo=TRUE}
+```
