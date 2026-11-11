@@ -1,0 +1,360 @@
+---
+title: "Home Assignment 1"
+author: "Roque Hauser"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+
+```{r setup, include=FALSE}
+# Hide R code by default
+knitr::opts_chunk$set(echo = FALSE)
+
+# Find RStudio project root
+project_root <- rprojroot::find_rstudio_root_file()
+
+# Set working directory for R Markdown
+knitr::opts_knit$set(root.dir = project_root)
+
+# Path to R script
+script_path <- file.path(
+  project_root,
+  "02_code",
+  "R",
+  "HA1.R"
+)
+
+# Load code sections for displaying them in the PDF
+knitr::read_chunk(script_path)
+```
+
+```{r load-code, include=FALSE}
+# Execute all calculations from the project directory
+withr::with_dir(
+  project_root,
+  source(script_path)
+)
+```
+
+
+# Exercise 1: Limits to Diversification
+
+## Part 1: Independent and identically distributed returns
+
+We consider an equally weighted portfolio consisting of $N$ securities with independent and identically distributed returns and finite variance.
+
+### Portfolio variance
+
+$$
+\operatorname{Var}(R_p) = \sigma_p^2 = \mathbf{w}'\Sigma\mathbf{w}
+$$
+
+Equally portfolio weights:
+
+$$
+w_i = \frac{1}{N}
+$$
+
+Portfolio return
+
+$$
+R_p = \sum_{i=1}^{N}w_iR_i
+$$
+
+Substituting the equal portfolio weights:
+
+$$
+R_p = \frac{1}{N}\sum_{i=1}^{N}R_i
+$$
+
+### Derivation of portfolio variance
+
+Variance of the portfolio return:
+
+$$
+\operatorname{Var}(R_p)
+=
+\operatorname{Var}\left(
+\frac{1}{N}\sum_{i=1}^{N}R_i
+\right)
+$$
+
+Variance rule for linear combination:
+
+$$
+\operatorname{Var}(aX+c)
+=
+a^2\operatorname{Var}(X)
+$$
+
+In our case.
+
+$$
+\operatorname{Var}(R_p)
+=
+\frac{1}{N^2}
+\operatorname{Var}\left(
+\sum_{i=1}^{N}R_i
+\right)
+$$
+
+Since the securities have independent returns, the variance of their sum equals the sum of their individual variances:
+
+$$
+\operatorname{Var}(R_p)
+=
+\frac{1}{N^2}
+\sum_{i=1}^{N}\operatorname{Var}(R_i)
+$$
+
+Because the returns are identically distributed, each security has the same variance:
+
+$$
+\operatorname{Var}(R_i)=\sigma^2
+$$
+
+Therefore:
+
+$$
+\operatorname{Var}(R_p)
+=
+\frac{1}{N^2}
+\sum_{i=1}^{N}\sigma^2
+=
+\frac{\sigma^2}{N}
+$$
+
+### Limit as N approaches infinity
+
+Portfolio variance approaches zero as N increases:
+
+$$
+\lim_{N\to\infty}\operatorname{Var}(R_p) = \lim_{N\to\infty}\frac{\sigma^2}{N} = 0
+$$
+
+## Part 2: Positive average covariance
+
+Unlike Part 1, the securities are no longer independent.
+
+For an equally weighted portfolio, the variance can be written as:
+
+$$
+\sigma_p^2 =
+\frac{\sigma^2}{N}
++
+\frac{N-1}{N}c
+$$
+
+Here, $\sigma^2$ represents the average individual variance and $c$ the average covariance between different securities.
+
+As $N$ approaches infinity:
+
+$$
+\lim_{N\to\infty}\sigma_p^2
+=
+0 + c
+=
+c > 0
+$$
+
+Therefore, portfolio variance does not approach zero because the positive average covariance remains.
+
+**Therefore, answer a is correct, as both parts have been proven.**
+
+\newpage
+# Exercise 2: Expected Utility
+
+The investment has two possible returns: -80% with a probability of 10%, and +15% with a probability of 90%.
+
+The utility function is given in the assignment: 
+
+
+$$
+U(R) = E[R] - \frac{1}{2}\lambda\operatorname{Var}(R)
+$$
+
+Results of my R code:
+$$
+E[R] = `r expected_return`
+$$
+
+$$
+\operatorname{Var}(R) = `r variance`
+$$
+
+$$
+U(R) = `r utility`
+$$
+
+**Therefore, answer c) is correct, since \(-1 < U(R) < 0\).**
+
+### R Code
+
+```{r exercise-2, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+# Exercise 3: Insurance and Risk Aversion
+
+```{r load-exercise-3, include=FALSE}
+source("02_code/R/HA1.R")
+```
+
+Since the investor is indifferent between buying insurance and remaining uninsured, both alternatives must provide the same utility.
+
+Using the utility function from Exercise 2:
+
+$$
+U(R) = E[R] - \frac{1}{2}\lambda\operatorname{Var}(R)
+$$
+
+Rearranging for $\lambda$:
+
+$$
+\lambda =
+\frac{2(\mu_{\text{uninsured}}-\mu_{\text{insured}})}
+{\sigma_{\text{uninsured}}^2-\sigma_{\text{insured}}^2}
+$$
+
+Using the values calculated in R:
+
+$$
+\lambda = `r lambda_3`
+$$
+
+**Therefore, answer a is correct, since $\lambda < 0.5$.**
+
+### R Code
+
+```{r exercise-3, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+# Exercise 4: Matrix Calculations
+
+First, the continuously compounded monthly returns are calculated from the index values using:
+
+$$
+r_t = \ln\left(\frac{P_t}{P_{t-1}}\right)
+$$
+
+The resulting return matrix $R$ has 120 rows and 7 columns.
+
+Next, the matrix product $R^\top R$ is calculated.
+
+The sum of its seven diagonal entries is:
+
+$$
+\text{SUM} = \sum_{i=1}^{7}(R^\top R)_{ii}
+= `r sum_diagonal`
+$$
+
+**Therefore, answer c is correct, since $5 < \text{SUM} < 10$.**
+
+### R Code
+
+```{r exercise-4, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+# Exercise 5: Returns and Volatility
+
+Using the return matrix $R$ from Exercise 4, the mean return and volatility are calculated for each of the seven assets.
+
+The mean return is calculated as:
+
+$$
+\overline{r}_i = \frac{1}{120}\sum_{t=1}^{120}r_{t,i}
+$$
+
+Volatility:
+
+$$
+\sigma_i = \sqrt{\frac{1}{119}\sum_{t=1}^{120}(r_{t,i}-\bar{r}_i)^2}
+$$
+
+
+Sum of all mean returns and volatilities:
+
+$$
+\text{SUM} = \sum_{i=1}^{7}(\overline{r}_i+\sigma_i)
+= `r sum_all_values`
+$$
+
+**Therefore, answer c is correct, since $0.5 < \text{SUM} < 1$.**
+
+### R Code
+
+```{r exercise-5, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+# Exercise 6: Quadratic Utility
+
+Quadratic utility function:
+
+$$
+U(W)=W-\frac{\lambda}{2}W^2,\quad \lambda>0
+$$
+
+### Absolute Risk Aversion (ARA)
+
+First and second derivatives:
+
+$$
+U'(W)=1-\lambda W
+$$
+
+$$
+U''(W)=-\lambda
+$$
+
+Arrow-Pratt measure of absolute risk aversion:
+
+$$
+ARA(W)=-\frac{U''(W)}{U'(W)}
+=\frac{\lambda}{1-\lambda W}
+$$
+
+Utility is increasing when $U'(W)>0$, which requires $W<1/\lambda$.
+
+### Increasing Absolute Risk Aversion (IARA)
+
+Differentiating ARA with respect to wealth:
+
+$$
+ARA'(W)=\frac{\lambda^2}{(1-\lambda W)^2}>0
+$$
+
+Therefore, absolute risk aversion increases with wealth in the region where utility is increasing.
+
+**Therefore, answer a is correct, as both parts have been proven.**
+
+\newpage
+# Exercise 7: Fama-French Factors
+
+The monthly Fama-French three-factor data is obtained from the Kenneth R. French Data Library.
+
+The dataset contains four variables: Mkt-RF, SMB, HML, and RF.
+
+First, the monthly returns are converted from percentages into decimal values.
+
+Next, the mean, standard deviation, and variance are calculated for each of the four variables using R.
+
+Then the variance-covariance matrix is calculated.
+
+
+The sum of all 16 entries of the covariance matrix is:
+
+$$
+\text{SUM} = \sum_{i=1}^{4}\sum_{j=1}^{4}\Sigma_{ij}
+= `r sum_all_matrix`
+$$
+
+**Therefore, answer b) is correct, since $0 < \text{SUM} < 0.5$.**
+
+### R Code
+
+```{r exercise-7, eval=FALSE, echo=TRUE}
+```
+

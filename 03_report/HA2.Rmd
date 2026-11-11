@@ -1,0 +1,319 @@
+---
+title: "Home Assignment 2"
+author: "Roque Hauser"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+
+```{r setup, include=FALSE}
+# Hide R code by default
+knitr::opts_chunk$set(echo = FALSE)
+
+# Find RStudio project root
+project_root <- rprojroot::find_rstudio_root_file()
+
+# Set working directory for R Markdown
+knitr::opts_knit$set(root.dir = project_root)
+
+# Path to R scripts
+script_path_cleaning <- file.path(
+  project_root,
+  "02_code",
+  "R",
+  "Cleaning_data_HA2-6.R"
+)
+
+script_path <- file.path(
+  project_root,
+  "02_code",
+  "R",
+  "HA2.R"
+)
+
+# Load code sections for displaying them in the PDF
+knitr::read_chunk(script_path_cleaning)
+knitr::read_chunk(script_path)
+```
+
+```{r load-code, include=FALSE}
+# Execute both scripts from the project directory
+withr::with_dir(project_root, {
+  source(script_path_cleaning)
+  source(script_path)
+})
+```
+
+# Data cleaning
+
+First, the dataset HA2data_2022.xlsx was cleaned and split into three seperate datasets: cleaned daily data, cleaned monthly data and cleaned monthly us cpi.
+
+## R Code
+
+### Cleaning of daily data
+```{r cleaning-daily, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+### Cleaning of monthly data
+
+```{r cleaning-monthly, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+### Cleaning of monthly US CPI data
+
+```{r cleaning-cpi, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 1
+
+### Question
+Use R to calculate descriptive statistics for the five stocks’ simple daily returns. Test each series for normality with the Jarque–Bera test. For how many series can you reject the null hypothesis of normality?
+
+### Answer
+The Jarque–Bera tests reject the null hypothesis of normally distributed daily returns for all five stocks at the 5% significance level (p < 0.05). Therefore, the correct answer is **d. More than 3**.
+
+```{r jb-table, echo=FALSE}
+knitr::kable(
+  jb_results,
+  caption = "Jarque-Bera Test Results",
+  col.names = c("Stock", "JB Statistic", "p-value"),
+  digits = 2,
+  align = "lcc"
+)
+```
+### R Code
+
+```{r exercise-1, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 2
+
+### Question
+Which stock had the lowest average daily bid–ask spread (%) during the sample?
+
+### Answer
+Apple has the lowest average daily bid–ask spread (%). Therefore, the correct answer is **a. Apple**
+
+```{r spread-table, echo=FALSE}
+knitr::kable(
+  spread_results,
+  caption = "Average Daily Bid-Ask Spreads",
+  col.names = c("Stock", "Average Spread (%)"),
+  align = "lc"
+)
+```
+### R Code
+
+```{r exercise-2, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 3
+
+### Question
+Use monthly simple returns for this and all remaining questions. If you invest 100% in the stock with the highest average return, what is your average monthly return? What is the average monthly return if you instead select the worst-performing stock? Answer: What is the difference between the best and worst average rates of return per annum?
+
+### Answer
+The difference between the highest and lowest annualized average returns is `r round(return_difference, 2)` percentage points. Therefore, the correct answer is **d. More than 15 percentage points**
+
+```{r exercise-3-table, echo=FALSE}
+knitr::kable(
+  return_results,
+  digits = 2,
+  caption = "Average Monthly and Annualized Returns",
+  col.names = c("Stock", "Monthly Return (%)", "Annualized Return (%)"),
+  align = "lcc"
+)
+```
+### R Code
+
+```{r exercise-3, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 4
+
+### Question
+Assume that you can predict each month’s best-performing stock and invest 100% in it each month. What is your rate of return per annum? If you instead select the worst-performing stock every month, what is your average monthly return? Answer: What is the difference between the best and worst rates of return per annum?
+
+### Answer
+The difference between the best and worst annualized returns is `r round(return_difference_4, 2)` percentage points. Therefore, the correct answer is **d. More than 15 percentage points**
+
+```{r exercise-4-table, echo=FALSE}
+knitr::kable(
+  exercise_4_results,
+  digits = 2,
+  caption = "Best and Worst Monthly Stock Selection",
+  col.names = c("Strategy", "Monthly Return (%)", "Annualized Return (%)")
+)
+```
+### R Code
+
+```{r exercise-4, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 5
+
+### Question
+Calculate the simple return on an equally weighted portfolio of all five stocks. Keep the portfolio equally weighted. What is its mean return per annum?
+
+### Answer
+The equally weighted portfolio has an average annualized return of `r round(equal_weighted_annual_mean, 2)`%, assuming monthly rebalancing. Therefore, the correct answer is **d. More than 15%**
+
+```{r exercise-5-table, echo=FALSE}
+knitr::kable(
+  data.frame(
+    Portfolio = "Equally Weighted",
+    Monthly_Return = equal_weighted_monthly_mean * 100,
+    Annual_Return = equal_weighted_annual_mean
+  ),
+  digits = 2,
+  caption = "Equally Weighted Portfolio Returns",
+  col.names = c("Portfolio", "Monthly Return (%)", "Annualized Return (%)")
+)
+```
+### R Code
+
+```{r exercise-5, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 6
+
+### Question
+Calculate the simple return on a value-weighted portfolio using market capitalisation weights. What is its mean return per annum?
+
+### Answer
+The value-weighted portfolio has an average annualized return of `r round(value_weighted_annual_mean, 2)`%. Therefore, the correct answer is **d. More than 15%**
+
+### R Code
+
+```{r exercise-6, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+## Exercise 7
+
+### Question
+Invest the same amount in each stock at the beginning of the period and then make no further trades. Calculate the portfolio's simple returns. What is its mean return per annum?
+
+### Answer
+The buy-and-hold portfolio starts with an equal allocation of 20% to each stock. Unlike an equally weighted portfolio, no rebalancing is performed, so the portfolio weights change over time as stock prices fluctuate.
+
+The average annualized return of the buy-and-hold portfolio is `r round(buy_hold_annual_mean, 2)`%.
+
+Therefore, the correct answer is **d. More than 15%**
+
+### R Code
+
+```{r exercise-7, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 8
+
+### Question
+A buy-and-hold portfolio involves investing at the beginning of the period and making no subsequent trades, except possibly reinvesting dividends. Which of the portfolios in Q5 and Q6 most closely resembles a buy-and-hold portfolio?
+
+### Answer
+A value-weighted portfolio most closely resembles a buy-and-hold strategy because portfolio weights naturally change with stock prices. Stocks that increase in value gain a larger portfolio weight, while those that decline lose weight.
+
+In contrast, an equally weighted portfolio requires regular rebalancing to maintain equal allocations. Therefore, a value-weighted portfolio is more consistent with a buy-and-hold strategy. 
+
+Therefore, the correct answer is **b. Value-weighted portfolio**
+
+\newpage
+
+# Exercise 9
+
+### Question
+What is the sum of the stock weights when the target return is 1% per month? 
+
+R hint: use solve() for linear systems and %*% for matrix multiplication. The risky-asset weights form a 5 × 1 vector; the remaining weight is invested in the risk-free asset. 
+
+(For the complete question, please refer to the assignment.)
+
+### Answer
+Using historical monthly returns, the sum of the five risky-asset weights at a target return of 1% per month is **0.35153**. This corresponds to an allocation of approximately 35.15% to risky assets and 64.85% to the risk-free asset.
+
+The portfolio volatility is approximately 2.44% per month. Both methods of calculating volatility produce identical results up to numerical precision, confirming the consistency of the calculations.
+
+Therefore, the correct answer is **b. 0.2 < SUM < 0.4**
+```{r exercise-9-results, echo=FALSE}
+knitr::kable(
+  cal_results[, c(
+    "Target_Return",
+    "Sum_Weights",
+    "Volatility_Weights",
+    "Volatility_Direct"
+  )],
+  digits = 4,
+  col.names = c(
+    "Target Return (%)",
+    "Sum of Stock Weights",
+    "Volatility (%)",
+    "Direct Volatility (%)"
+  ),
+  caption = "Capital Allocation Line Results"
+)
+```
+### R Code
+
+```{r exercise-9, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 10
+
+### Question
+Plot the minimum-variance frontier of the five risky assets in R, allowing short selling. What is the volatility of the minimum-variance portfolio for a target return of 0.30% per month?
+
+### Answer
+The minimum-variance frontier was calculated using the monthly mean-return vector and sample variance-covariance matrix of the five stocks, allowing short selling.
+
+For a target monthly return of 0.30%, the minimum-variance portfolio has a volatility of `r round(min_var_volatility_03, 2)`%. The portfolio weights sum to 1, and the expected portfolio return satisfies the target return constraint.
+
+Therefore, the correct answer is **a. Less than 5%**
+
+```{r exercise-10-plot, echo=FALSE, fig.width=6, fig.height=4.5, out.width="85%", fig.align="center"}
+plot(
+  min_var_volatility * 100,
+  target_returns_10 * 100,
+  type = "l",
+  lwd = 2,
+  xlab = "Monthly Volatility (%)",
+  ylab = "Expected Monthly Return (%)",
+  main = "Minimum-Variance Frontier",
+  cex.main = 0.9,
+  cex.lab = 0.85,
+  cex.axis = 0.8
+)
+
+points(
+  min_var_volatility_03,
+  target_return_10 * 100,
+  col = "red",
+  pch = 19,
+  cex = 1.2
+)
+```
+### R Code
+
+```{r exercise-10, eval=FALSE, echo=TRUE}
+```

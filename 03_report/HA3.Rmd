@@ -1,0 +1,166 @@
+---
+title: "Home Assignment 3"
+author: "Roque Hauser"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+[View RStudio Project on GitHub](https://github.com/USERNAME/REPOSITORY)
+
+
+```{r setup, include=FALSE}
+# Hide R code by default
+knitr::opts_chunk$set(echo = FALSE)
+
+# Find RStudio project root
+project_root <- rprojroot::find_rstudio_root_file()
+
+# Set working directory for R Markdown
+knitr::opts_knit$set(root.dir = project_root)
+
+# Path to R scripts
+script_path_cleaning <- file.path(
+  project_root,
+  "02_code",
+  "R",
+  "Cleaning_data_HA2-6.R"
+)
+
+script_path <- file.path(
+  project_root,
+  "02_code",
+  "R",
+  "HA3.R"
+)
+
+# Load code sections for displaying them in the PDF
+knitr::read_chunk(script_path_cleaning)
+knitr::read_chunk(script_path)
+```
+
+```{r load-code, include=FALSE}
+# Execute both scripts from the project directory
+withr::with_dir(project_root, {
+  source(script_path_cleaning)
+  source(script_path)
+})
+```
+
+# Exercise 1
+
+### Question
+Calculate the value-weighted portfolio return as in HA2 Q6, now subject to a maximum
+weight of 35% in any single asset. Briefly explain how you enforce the weight limit. What is
+the mean realised return per annum?
+
+### Answer
+The portfolio weights are based on the previous month's market capitalisations and capped at 35%, with excess weight redistributed proportionally among the remaining stocks.
+
+The mean annualised return is The mean annualised return is **`r round(mean_annual_return_1)`%**.
+
+Therefore, the correct answer is **c. 27–30%**.
+
+### R Code
+
+```{r exercise-1, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 2
+
+### Question
+HA2 Q10 continued. Calculate the global minimum-variance portfolio’s weights, expected
+return, and volatility. Answer: What is its expected return per annum?
+
+### Answer
+The global minimum-variance portfolio was calculated using the monthly mean returns and sample covariance matrix of the five stocks.
+
+The portfolio has an expected annualised return of **`r round(mean_annual_return_2)`%** and a monthly volatility of **`r round(volatility_monthly_2 * 100, 2)`%**.
+
+Therefore, the correct answer is **c. 19–20%**.
+
+```{r exercise-2-weights, echo=FALSE}
+weights_table_2 <- data.frame(
+  Stock = c("Apple", "Microsoft", "Tesla",
+            "JP Morgan Chase", "Walmart"),
+  Weight = weights_gmv_2 * 100
+)
+
+knitr::kable(
+  weights_table_2,
+  digits = 2,
+  col.names = c("Stock", "Portfolio Weight (%)"),
+  caption = "Global Minimum-Variance Portfolio Weights"
+)
+```
+### R Code
+
+```{r exercise-2, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 3
+
+### Question
+Assume that the risk-free rate is given in column AQ. Divide by 100 to convert the annual
+percentage rate to a decimal, and then divide by 12 to approximate the monthly rate. Use
+the rate observed at the end of the preceding month: for January 2022, use the value from
+31 December 2021; for February, use the value from the end of January; and so on. This
+ensures that the risk-free return is known before the investment period.
+Re-estimate the return and volatility of the portfolio on the capital market line with a target
+return of 1% per month. What is the expected volatility for January 2022?
+
+### Answer
+Using historical monthly returns from January 2011 to December 2021 and the risk-free rate from December 2021, the CML portfolio was calculated for a target return of 1% per month.
+
+The expected monthly volatility for January 2022 is **`r round(volatility_monthly_3 * 100)`%**.
+
+Therefore, the correct answer is **c. 2.0–2.2%**.
+
+### R Code
+
+```{r exercise-3, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 4
+
+### Question
+Assume that the risk-free rate is given in column AQ. Divide by 100 to convert the annual
+percentage rate to a decimal, and then divide by 12 to approximate the monthly rate. Use
+the rate observed at the end of the preceding month: for January 2022, use the value from
+31 December 2021; for February, use the value from the end of January; and so on. This
+ensures that the risk-free return is known before the investment period.
+Re-estimate the return and volatility of the portfolio on the capital market line with a target
+return of 1% per month. What is the expected volatility for January 2022?
+
+### Answer
+Using a rolling estimation window of 132 monthly returns, the expected portfolio volatilities were calculated for January to October 2022.
+
+The average expected monthly volatility is **`r round(average_volatility_4, 2)`%**.
+
+Therefore, the correct answer is **c. 2.0–2.2%**.
+
+```{r exercise-4-results, echo=FALSE}
+volatility_table_4 <- data.frame(
+  Month = format(rolling_results_4$Date, "%B %Y"),
+  Expected_Volatility = rolling_results_4$Expected_Volatility * 100
+)
+
+knitr::kable(
+  volatility_table_4,
+  digits = 2,
+  col.names = c("Month", "Expected Volatility (%)"),
+  caption = "Rolling Expected Monthly Portfolio Volatility"
+)
+```
+### R Code
+
+```{r exercise-4, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 5
