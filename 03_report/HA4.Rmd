@@ -1,0 +1,358 @@
+---
+title: "Home Assignment 4"
+author: "Roque Hauser"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 1
+    number_sections: false
+header-includes:
+  - \usepackage{xcolor}
+  - \usepackage{hyperref}
+  - \hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+---
+
+\href{https://github.com/Roque-Casa/Asset-Pricing-Portfolio-Theory_Home_Assignments}{\underline{\textcolor{blue}{View RStudio Project on GitHub}}}
+
+```{r setup, include=FALSE}
+# Hide R code by default
+knitr::opts_chunk$set(echo = FALSE)
+
+# Find RStudio project root
+project_root <- rprojroot::find_rstudio_root_file()
+
+# Set working directory for R Markdown
+knitr::opts_knit$set(root.dir = project_root)
+
+# Path to R scripts
+script_path_cleaning <- file.path(
+  project_root,
+  "02_code",
+  "R",
+  "Cleaning_data_HA2-6.R"
+)
+
+script_path <- file.path(
+  project_root,
+  "02_code",
+  "R",
+  "HA4.R"
+)
+
+# Load code sections for displaying them in the PDF
+knitr::read_chunk(script_path_cleaning)
+knitr::read_chunk(script_path)
+```
+
+```{r load-code, include=FALSE}
+# Execute both scripts from the project directory
+withr::with_dir(project_root, {
+  source(script_path_cleaning)
+  source(script_path)
+})
+```
+
+# Exercise 1
+
+### Question
+Show that the definition of the simple total return 1 + Rt+1 = Pt+1/Pt + Dt+1/Pt = 1 + CGt+1 + DYt+1, where CGt+1 is the capital gain and DYt+1 is the dividend yield, implies the following decomposition of the continuously compounded return: rt+1 = gmt+1 + get+1 + dpt+1, where gm is the log growth rate of the price/earnings ratio, ge is the log growth rate of earnings, and and dpt+1 = log(1 + Dt+1/Pt+1)..
+
+### Answer
+### Exercise 1 – Answer
+
+Starting with the definition of the simple total return:
+
+\[
+1+R_{t+1}=\frac{P_{t+1}+D_{t+1}}{P_t}
+\]
+
+Taking the natural logarithm of both sides gives the continuously compounded return:
+
+\[
+r_{t+1}
+=\ln(1+R_{t+1})
+=\ln\left(\frac{P_{t+1}+D_{t+1}}{P_t}\right)
+\]
+
+Factoring out \(P_{t+1}\) from the numerator:
+
+\[
+r_{t+1}
+=\ln\left(
+\frac{P_{t+1}}{P_t}
+\left(1+\frac{D_{t+1}}{P_{t+1}}\right)
+\right)
+\]
+
+Using the logarithm rule \(\ln(ab)=\ln(a)+\ln(b)\):
+
+\[
+r_{t+1}
+=\ln\left(\frac{P_{t+1}}{P_t}\right)
++\ln\left(1+\frac{D_{t+1}}{P_{t+1}}\right)
+\]
+
+Next, express the stock price as the product of the price-to-earnings ratio and earnings:
+
+\[
+P_t=\frac{P_t}{E_t}\cdot E_t
+\]
+
+Therefore, the price growth term can be rewritten as:
+
+\[
+\frac{P_{t+1}}{P_t}
+=
+\frac{P_{t+1}/E_{t+1}}{P_t/E_t}
+\cdot
+\frac{E_{t+1}}{E_t}
+\]
+
+Taking the natural logarithm and applying the logarithm rule again:
+
+\[
+\ln\left(\frac{P_{t+1}}{P_t}\right)
+=
+\ln\left(
+\frac{P_{t+1}/E_{t+1}}{P_t/E_t}
+\right)
++
+\ln\left(\frac{E_{t+1}}{E_t}\right)
+\]
+
+Substituting this into the return equation:
+
+\[
+r_{t+1}
+=
+\underbrace{\ln\left(
+\frac{P_{t+1}/E_{t+1}}{P_t/E_t}
+\right)}_{gm_{t+1}}
++
+\underbrace{\ln\left(\frac{E_{t+1}}{E_t}\right)}_{ge_{t+1}}
++
+\underbrace{\ln\left(
+1+\frac{D_{t+1}}{P_{t+1}}
+\right)}_{dp_{t+1}}
+\]
+
+Thus, the continuously compounded return can be decomposed into the log growth rate of the price-to-earnings ratio, the log growth rate of earnings, and the dividend component:
+
+\[
+\boxed{r_{t+1}=gm_{t+1}+ge_{t+1}+dp_{t+1}}
+\]
+
+Therefore, the correct answer is **a. Managed to prove this.**
+
+\newpage
+
+
+# Exercise 2
+
+### Question
+Calculate simple excess returns over the risk-free return for the five stocks and the S&P 500 market index. Calculate the average monthly excess return for each of these six assets. What is the sum of these averages?
+
+### Answer
+The monthly simple excess returns were calculated by subtracting the risk-free rate from the returns of the five stocks and the S&P 500 market index.
+
+The sum of the average monthly excess returns across all six assets is **`r sum_mean_excess_2 `%**.
+
+Therefore, the correct answer is **a. Less than 15%**.
+
+```{r exercise-2-results, echo=FALSE}
+knitr::kable(
+  results_2,
+  digits = 2,
+  col.names = c("Asset", "Mean Monthly Excess Return (%)"),
+  caption = "Average Monthly Excess Returns (2011–2021)"
+)
+```
+
+### R Code
+
+```{r exercise-2, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+
+# Exercise 3
+
+### Question
+Calculate monthly inflation from the CPI index. Use the Fisher equation to calculate monthly real returns for the five stocks and the market index. Calculate each asset's arithmetic average monthly real return. What is the sum of these six averages?
+
+### Answer
+Monthly inflation was calculated from the CPI index. The real returns of the five stocks and the S&P 500 were then calculated using the Fisher equation.
+
+The arithmetic average monthly real return was calculated for each of the six assets.
+
+The sum of the average monthly real returns is **`r sum_mean_real_3 `%**.
+
+Therefore, the correct answer is **a. Less than 15%**.
+
+```{r exercise-3-results, echo=FALSE}
+knitr::kable(
+  results_3,
+  digits = 2,
+  col.names = c("Asset", "Mean Monthly Real Return (%)"),
+  caption = "Average Monthly Real Returns (2011–2021)"
+)
+```
+
+### R Code
+
+```{r exercise-3, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+
+# Exercise 4
+
+### Question
+Estimate alphas and betas for the five stocks by ordinary least squares (OLS), using simple excess returns and the S&P 500 as the market portfolio proxy. What is the sum of the monthly alphas?
+
+### Answer
+The monthly alphas and betas were estimated using OLS regressions of each stock's excess returns on the S&P 500 excess returns.
+
+The sum of the estimated monthly alphas is **`r sum_alphas_4 `**.
+
+Therefore, the correct answer is **c. 0 <SUM <0.25**.
+
+```{r exercise-4-results, echo=FALSE}
+alpha_beta_table_4 <- data.frame(
+  Stock = results_4$Stock,
+  Alpha = results_4$Alpha * 100,
+  Beta = results_4$Beta
+)
+
+knitr::kable(
+  alpha_beta_table_4,
+  digits = 3,
+  col.names = c("Stock", "Alpha (% per month)", "Beta"),
+  caption = "OLS Estimates of Monthly Alphas and Betas"
+)
+```
+
+### R Code
+
+```{r exercise-4, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+
+# Exercise 5
+
+### Question
+What is the sum of the betas estimated in Q4?
+
+### Answer
+The sum of the five estimated betas was calculated using the OLS regression coefficients from Exercise 4.
+
+The sum of the betas is **`r sum_betas_5 `**.
+
+Therefore, the correct answer is **d. 4 <SUM**.
+
+### R Code
+
+```{r exercise-5, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 6
+
+### Question
+Save the residuals from the regressions and calculate each stock's monthly residual variance. Use sample residual variances with denominator T - 1. What is the sum of these variances?
+
+### Answer
+The monthly residuals were obtained from the five OLS regressions estimated in Exercise 4. Their sample variances were calculated using the denominator T - 1.
+
+The sum of the five monthly residual variances is **`r sum_residual_variances_6 `**.
+
+Therefore, the correct answer is **a. SUM <0.1**.
+
+```{r exercise-6-results, echo=FALSE}
+knitr::kable(
+  results_6,
+  digits = 5,
+  col.names = c("Stock", "Residual Variance"),
+  caption = "Monthly Residual Variances"
+)
+```
+
+### R Code
+
+```{r exercise-6, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 7
+
+### Question
+Calculate the monthly variance–covariance and correlation matrices of the five stocks' excess returns using the single-index model. Assume that residuals of different stocks are uncorrelated. What is the sum of the variances on the diagonal of the variance–covariance matrix?
+
+### Answer
+The monthly variance–covariance matrix was constructed using the estimated betas, residual variances, and the sample variance of market excess returns. Residuals across different stocks were assumed to be uncorrelated.
+
+The correlation matrix was then calculated from the estimated covariance matrix.
+
+The sum of the five diagonal variances is **`r sum_variances_7 `**.
+
+Therefore, the correct answer is **a. SUM <0.1**.
+
+```{r exercise-7-covariance, echo=FALSE}
+knitr::kable(
+  cov_matrix_7,
+  digits = 5,
+  caption = "Single-Index Model Variance-Covariance Matrix"
+)
+```
+
+```{r exercise-7-correlation, echo=FALSE}
+knitr::kable(
+  cor_matrix_7,
+  digits = 3,
+  caption = "Single-Index Model Correlation Matrix"
+)
+```
+
+### R Code
+
+```{r exercise-7, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 8
+
+### Question
+Test at the 5% significance level whether the alphas from Q4 are jointly different from zero. Calculate the full residual covariance matrix, including off-diagonal covariances, and use the GRS statistic and its p-value to determine whether the CAPM is rejected.
+
+### Answer
+The Gibbons–Ross–Shanken (GRS) test was used to test whether the five estimated alphas are jointly equal to zero.
+
+The full residual covariance matrix was calculated using the denominator T - 2, including the off-diagonal residual covariances.
+
+The calculated GRS statistic is **`r GRS_8 `**, with a corresponding p-value of **`r p_value_8 `**.
+
+At the 5% significance level, the null hypothesis that all alphas are jointly zero is **rejected**.
+
+Therefore, the correct answer is **a. CAPM is rejected.**
+
+```{r exercise-8-results, echo=FALSE}
+knitr::kable(
+  results_8,
+  digits = 4,
+  col.names = c("Statistic", "Value"),
+  caption = "Gibbons-Ross-Shanken Test Results"
+)
+```
+
+### R Code
+
+```{r exercise-8, eval=FALSE, echo=TRUE}
+```
