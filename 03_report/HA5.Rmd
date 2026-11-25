@@ -1,0 +1,439 @@
+---
+title: "Home Assignment 5"
+author: "Roque Hauser"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 1
+    number_sections: false
+header-includes:
+  - \usepackage{xcolor}
+  - \usepackage{hyperref}
+  - \hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+---
+
+\href{https://github.com/Roque-Casa/Asset-Pricing-Portfolio-Theory_Home_Assignments}{\underline{\textcolor{blue}{View RStudio Project on GitHub}}}
+
+```{r setup, include=FALSE}
+# Hide R code by default
+knitr::opts_chunk$set(echo = FALSE)
+
+# Find RStudio project root
+project_root <- rprojroot::find_rstudio_root_file()
+
+# Set working directory for R Markdown
+knitr::opts_knit$set(root.dir = project_root)
+
+# Path to R scripts
+script_path_cleaning <- file.path(
+  project_root,
+  "02_code",
+  "R",
+  "Cleaning_Chapter_7.R"
+)
+
+script_path <- file.path(
+  project_root,
+  "02_code",
+  "R",
+  "HA5.R"
+)
+
+# Load code sections for displaying them in the PDF
+knitr::read_chunk(script_path_cleaning)
+knitr::read_chunk(script_path)
+```
+
+```{r load-code, include=FALSE}
+# Execute both scripts from the project directory
+withr::with_dir(project_root, {
+  source(script_path_cleaning)
+  source(script_path)
+})
+```
+
+# Data Cleaning of Chapter_7_2020
+The Chapter_7_2020.xlsm file was first cleaned before using the data for the exercises.
+
+### R Code
+```{r exercise-10, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+# Exercise 1
+
+### Question
+Use the same data as before through the end of 2021. Estimate a two-factor model for excess
+returns. Use the market portfolio as the first factor and the surprise in monthly inflation (the
+percentage change in CPI) as the second factor. For simplicity, use the preceding month’s
+inflation as the expectation for the next month. Define the surprise as realised inflation minus
+expected inflation. Use February 2011–December 2021 for the two-factor regressions. What
+is the sum of the five stocks’ sensitivities (“inflation betas”) to inflation risk?
+
+### Answer
+Monthly inflation was calculated from the CPI index, and the inflation surprise was defined as the difference between realised monthly inflation and the preceding month's inflation.
+
+A two-factor model was estimated using OLS regressions of each stock's excess returns on market excess returns and inflation surprises.
+
+The sum of the five estimated inflation betas is **`r sum_inflation_betas_1 `**.
+
+Therefore, the correct answer is **d. 0.6 <SUM**.
+
+```{r exercise-1-results, echo=FALSE}
+knitr::kable(
+  results_1,
+  digits = 4,
+  col.names = c("Stock", "Alpha", "Market Beta", "Inflation Beta"),
+  caption = "Two-Factor Model Regression Estimates"
+)
+```
+
+### R Code
+
+```{r exercise-1, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+
+# Exercise 2
+
+### Question
+Perform a Fama–MacBeth two-step analysis of the CAPM for the five stocks using data through the end of 2021. Use rolling betas estimated over 60 months (five years). Explain your results. What is the average y1 parameter?
+
+### Answer
+The Fama–MacBeth two-step procedure was applied using monthly excess returns from January 2011 to December 2021.
+
+In the first step, individual stock betas were estimated using rolling windows of 60 monthly observations. In the second step, cross-sectional regressions were performed using the estimated betas and the realised excess returns of the following month.
+
+The average gamma 1 parameter is **`r mean_gamma1_2 `**.
+
+The corresponding p-value is **`r p_gamma1_2 `**. At the 5% significance level, the estimated gamma 1 parameter is **not statistically significant**.
+
+Therefore, the correct answer is **b. 0 <y1 <0.15**.
+
+```{r exercise-2-results, echo=FALSE}
+knitr::kable(
+  results_2,
+  digits = 4,
+  col.names = c(
+    "Parameter",
+    "Estimate",
+    "Standard Error",
+    "t-Statistic",
+    "p-value"
+  ),
+  caption = "Fama-MacBeth Regression Results"
+)
+```
+
+### R Code
+
+```{r exercise-2, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+
+# Exercise 3
+
+### Question
+Use the five stocks’ simple-return data through the end of 2021. Download and study the Black-Litterman example workbook from Moodle. Reproduce the Treynor-Black sheet’s analysis in R, using the variance–covariance matrix estimated in HA4 Q7 (annualise by multiplying every entry by 12) and the betas estimated in HA4 Q4. Use the annual risk-free rate observed at the end of 2021. Calculate annual market volatility by multiplying the sample standard deviation of monthly excess market returns by sqrt(12). Retain the market equity premium in cell E5 and set the risk-aversion parameter in E8 to 0.5. Allow unrestricted short selling and borrowing at the risk-free rate. Use the CAPM and the following annual alpha views: 1% for asset 1,-0.5% for asset 2, and 2% for asset 5, with zero alpha views for the remaining assets. Adapt the four-asset example to five assets, following the sheet’s allocation procedure. What fraction of total wealth is invested in risky assets?
+
+### Answer
+The Treynor-Black example workbook's allocation procedure was reproduced using the estimated CAPM betas and the annualised single-index covariance matrix from HA4.
+
+The market equity premium was retained at 5%, and the risk-aversion parameter was set to 0.5.
+
+The optimal fraction of total wealth invested in risky assets is **`r risky_weight_3 `** (equivalent to **`r risky_weight_3 * 100 `%**).
+
+The remaining fraction invested in the risk-free asset is **`r rf_weight_3 * 100 `%**.
+
+Therefore, the correct answer is **d. 0.6 <SUM**.
+
+```{r exercise-3-results, echo=FALSE}
+knitr::kable(
+  results_3,
+  digits = 2,
+  col.names = c("Asset", "Portfolio Weight (%)"),
+  caption = "Initial CAPM-Based Portfolio Allocation"
+)
+```
+
+### R Code
+
+```{r exercise-3, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+
+
+# Exercise 4
+
+### Question
+What fraction of total wealth is invested in the active portfolio?
+
+### Answer
+The active portfolio weights were calculated using the annual alpha views and annualised residual variances of the five stocks.
+
+The alpha, beta, and residual variance of the active portfolio were then used to determine its optimal adjusted weight according to the Treynor-Black model.
+
+The adjusted active portfolio weight was multiplied by the total risky asset allocation obtained in Exercise 3.
+
+The fraction of total wealth invested in the active portfolio is **`r active_weight_total_4 `** (equivalent to **`r active_weight_total_4 * 100 `%**).
+
+Therefore, the correct answer is **d. 0.06 <SUM**.
+
+```{r exercise-4-weights, echo=FALSE}
+knitr::kable(
+  active_weights_table_4,
+  digits = 2,
+  col.names = c(
+    "Stock",
+    "Annual Alpha View (%)",
+    "Active Portfolio Weight (%)"
+  ),
+  caption = "Weights within the Active Portfolio"
+)
+```
+
+```{r exercise-4-results, echo=FALSE}
+knitr::kable(
+  results_4,
+  digits = 2,
+  col.names = c("Asset", "Weight (%)"),
+  caption = "Treynor-Black Total Wealth Allocation"
+)
+```
+
+### R Code
+
+```{r exercise-4, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+
+# Exercise 5
+
+### Question
+Reproduce the Black-Litterman Case sheet in R using the data in that sheet, rather than the earlier stock data.
+
+Replace the two example views with three views, expressed as simple returns: asset 1 (Nokia) will return 10% per annum; the equally weighted average of assets 1 and 2 will outperform asset 3 by 2% per annum; and the equally weighted average of assets 4 and 5 will outperform asset 1 by 1% per annum.
+
+Convert annual view returns to monthly values by dividing by 12. Keep all other parameters unchanged, including lambda = 1.
+
+Provide P, V, Omega, E[R], and the revised weighting matrices. What is the revised expected monthly return for Nokia?
+
+### Answer
+The Black-Litterman model was reproduced using the market capitalisation weights, covariance matrix, and model parameters from the original Excel workbook.
+
+Three investor views were specified in the P matrix, and the annual view returns were converted into monthly values. The diagonal Omega matrix was calculated following the procedure used in the Excel example.
+
+The revised expected returns and covariance matrix were then used to calculate the revised portfolio weights.
+
+The revised expected monthly return for Nokia is **`r nokia_return_5 `** (equivalent to **`r nokia_return_5 * 100 `%**).
+
+Therefore, the correct answer is **b. 0 < return < 0.02**.
+
+```{r exercise-5-p, echo=FALSE}
+knitr::kable(
+  P_5,
+  digits = 2,
+  caption = "Investor Views Matrix (P)"
+)
+```
+
+```{r exercise-5-v, echo=FALSE}
+knitr::kable(
+  V_5,
+  digits = 6,
+  caption = "Monthly View Returns (V)"
+)
+```
+
+```{r exercise-5-omega, echo=FALSE}
+knitr::kable(
+  Omega_5,
+  digits = 7,
+  caption = "View Uncertainty Matrix (Omega)"
+)
+```
+
+```{r exercise-5-returns, echo=FALSE}
+knitr::kable(
+  results_5,
+  digits = 4,
+  col.names = c(
+    "Asset",
+    "Equilibrium Return (%)",
+    "Revised Return (%)"
+  ),
+  caption = "Black-Litterman Expected Monthly Returns"
+)
+```
+
+```{r exercise-5-weights, echo=FALSE}
+knitr::kable(
+  weights_table_5,
+  digits = 2,
+  col.names = c(
+    "Asset",
+    "Market Weight (%)",
+    "Revised R (%)",
+    "Revised R + Sigma (%)"
+  ),
+  caption = "Normalised Black-Litterman Portfolio Weights"
+)
+```
+
+### R Code
+
+```{r exercise-5, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+
+# Exercise 6
+
+### Question
+Report the revised fully invested portfolio weights using both the revised expected returns and revised covariance matrix. Also report the tactical asset allocation (TAA) deviations from the market-capitalisation weights on 31 October 2016. Answer: What is Kesko's total portfolio weight, rather than its TAA deviation?
+
+### Answer
+The revised Black-Litterman portfolio weights obtained in Exercise 5 were used to construct a fully invested portfolio.
+
+The tactical asset allocation deviations were calculated as the differences between the revised portfolio weights and the original market-capitalisation weights.
+
+Kesko's revised total portfolio weight is **`r kesko_weight_6 `** (equivalent to **`r kesko_weight_6 * 100 `%**).
+
+Its tactical asset allocation deviation is **`r kesko_taa_6 * 100` percentage points**.
+
+Therefore, the correct answer is **d. 0.04 <SUM**.
+
+```{r exercise-6-results, echo=FALSE}
+knitr::kable(
+  results_6,
+  digits = 4,
+  col.names = c(
+    "Asset",
+    "Market Weight (%)",
+    "Revised Weight (%)",
+    "TAA (pp)"
+  ),
+  caption = "Revised Black-Litterman Portfolio Weights and TAA"
+)
+```
+
+### R Code
+
+```{r exercise-6, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+
+# Exercise 7
+
+### Question
+Using the revised, normalised Black–Litterman portfolio weights from the annual-input calculation, calculate the portfolio's return for October 2016. Use the weights obtained after updating both expected returns and the variance–covariance matrix.
+
+Follow the example workbook's return convention: take the October 2016 excess continuously compounded returns from columns M–Q of the Data for the BLM case worksheet, transform each return as exp(r) - 1, and calculate their portfolio-weighted sum. Treat this as a retrospective calculation using the example's weights.
+
+What is the resulting portfolio return?
+
+### Answer
+The Black-Litterman model was recalculated using annualised inputs. The revised expected returns and revised covariance matrix were used to determine the normalised portfolio weights.
+
+The continuously compounded excess returns for October 2016 were converted into simple returns and multiplied by their corresponding portfolio weights.
+
+The resulting portfolio return for October 2016 is **`r portfolio_return_7 `** (equivalent to **`r portfolio_return_7 * 100 `%**).
+
+Therefore, the correct answer is **a. return < 0**.
+
+```{r exercise-7-results, echo=FALSE}
+knitr::kable(
+  results_7,
+  digits = 2,
+  col.names = c(
+    "Asset",
+    "Weight (%)",
+    "Log Return (%)",
+    "Simple Return (%)",
+    "Contribution (pp)"
+  ),
+  caption = "Black-Litterman Portfolio Return for October 2016"
+)
+```
+
+### R Code
+
+```{r exercise-7, eval=FALSE, echo=TRUE}
+```
+
+\newpage
+
+
+# Exercise 8
+
+### Question
+Assume that you have stock-market total-return and price-index series that are otherwise similar, except that the price index excludes dividends. Prove that dividends can be extracted using
+
+\[
+D_t = (R_t - R_t^x)I_{t-1}^x,
+\]
+
+where $R_t$ is the simple return calculated from the total-return index, $R_t^x$ is the simple return calculated from the price index, and $I_{t-1}^x$ is the preceding period's price-index level.
+
+### Answer
+
+The total return includes both capital gains and dividends. Under the assumption that the two indices differ only in their treatment of dividends, the simple total return can be expressed as:
+
+\[
+R_t =
+\frac{I_t^x + D_t - I_{t-1}^x}
+{I_{t-1}^x}
+\]
+
+In contrast, the simple price return excludes dividends:
+
+\[
+R_t^x =
+\frac{I_t^x - I_{t-1}^x}
+{I_{t-1}^x}
+\]
+
+The total return can be decomposed into the price return and the dividend yield:
+
+\[
+R_t =
+\frac{I_t^x - I_{t-1}^x}
+{I_{t-1}^x}
++
+\frac{D_t}{I_{t-1}^x}
+\]
+
+Substituting the definition of the price return gives:
+
+\[
+R_t = R_t^x + \frac{D_t}{I_{t-1}^x}
+\]
+
+Subtracting the price return from both sides yields:
+
+\[
+R_t - R_t^x = \frac{D_t}{I_{t-1}^x}
+\]
+
+Multiplying both sides by the preceding period's price-index level gives:
+
+\[
+\boxed{D_t = (R_t - R_t^x)I_{t-1}^x}
+\]
+
+Thus, dividends expressed in index points can be extracted by multiplying the difference between the total return and the price return by the preceding period's price-index level.
+
+Therefore, the correct answer is **a. I managed to prove this.**
